@@ -11,6 +11,9 @@ import com.linkedin.kafka.cruisecontrol.metricsreporter.metric.TopicMetric;
 import com.linkedin.kafka.cruisecontrol.metricsreporter.metric.YammerMetricProcessor;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Metric;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -122,16 +125,16 @@ public class CruiseControlMetricsReporter implements MetricsReporter, Runnable {
     try {
       input = new FileInputStream("/data_disk_0/kafka-logs/meta.properties");
       prop.load(input);
-      String brokerId = prop.getProperty("broker.id");
+      brokerId = prop.getProperty("broker.id");
     }
-    catch (IOException ex) {
+    catch (Exception ex) {
       ex.printStackTrace();
     }
     finally {
       if (input != null) {
         try {
           input.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
           e.printStackTrace();
         }
       }
