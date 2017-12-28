@@ -108,10 +108,35 @@ public class CruiseControlMetricsReporter implements MetricsReporter, Runnable {
     setIfAbsent(producerProps, ProducerConfig.ACKS_CONFIG, "all");
     _producer = new KafkaProducer<>(producerProps);
 
-    _brokerId = Integer.parseInt((String) configs.get(KafkaConfig.BrokerIdProp()));
+    //_brokerId = Integer.parseInt((String) configs.get(KafkaConfig.BrokerIdProp()));
+    _brokerId = Integer.parseInt(getBrokerId());
 
     _cruiseControlMetricsTopic = reporterConfig.getString(CruiseControlMetricsReporterConfig.CRUISE_CONTROL_METRICS_TOPIC_CONFIG);
     _reportingIntervalMs = reporterConfig.getLong(CruiseControlMetricsReporterConfig.CRUISE_CONTROL_METRICS_REPORTING_INTERVAL_MS_CONFIG);
+  }
+
+  private String getBrokerId() {
+    Properties prop = new Properties();
+    InputStream input = null;
+    String brokerId = null;
+    try {
+      input = new FileInputStream("/data_disk_0/kafka-logs/meta.properties");
+      prop.load(input);
+      String brokerId = prop.getProperty("broker.id");
+    }
+    catch (IOException ex) {
+      ex.printStackTrace();
+    }
+    finally {
+      if (input != null) {
+        try {
+          input.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return brokerId;
   }
 
   @Override
