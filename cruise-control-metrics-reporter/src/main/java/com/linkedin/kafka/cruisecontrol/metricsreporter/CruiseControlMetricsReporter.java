@@ -139,6 +139,7 @@ public class CruiseControlMetricsReporter implements MetricsReporter, Runnable {
         }
       }
     }
+    LOG.info("$$$ brokerid = " + brokerId);
     return brokerId;
   }
 
