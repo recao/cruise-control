@@ -200,20 +200,16 @@ public class CruiseControlMetricsReporter implements MetricsReporter, Runnable {
     // Use topic name as key if existing so that the same sampler will be able to collect all the information
     // of a topic.
     String key = ccm.metricClassId() == CruiseControlMetric.MetricClassId.TOPIC_METRIC ?
-        ((TopicMetric) ccm).topic() : Integer.toString(ccm.brokerId());
+            ((TopicMetric) ccm).topic() : Integer.toString(ccm.brokerId());
     ProducerRecord<String, CruiseControlMetric> producerRecord =
-        new ProducerRecord<>(_cruiseControlMetricsTopic, null, ccm.time(), key, ccm);
-    LOG.error("$$$ Sending Cruise Control metric {}.", ccm);
+            new ProducerRecord<>(_cruiseControlMetricsTopic, null, ccm.time(), key, ccm);
+    LOG.debug("Sending Cruise Control metric {}.", ccm);
     _producer.send(producerRecord, new Callback() {
       @Override
       public void onCompletion(RecordMetadata recordMetadata, Exception e) {
         if (e != null) {
-          LOG.error("$$$ Failed to send Cruise Control metric {}", ccm);
-          LOG.error(e.toString());
+          LOG.error("Failed to send Cruise Control metric {}", ccm);
           _numMetricSendFailure++;
-        }
-        else {
-          LOG.error("$$$ Successfully sent Cruise Control metric {}.", ccm);
         }
       }
     });
