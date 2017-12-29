@@ -203,12 +203,14 @@ public class CruiseControlMetricsReporter implements MetricsReporter, Runnable {
         ((TopicMetric) ccm).topic() : Integer.toString(ccm.brokerId());
     ProducerRecord<String, CruiseControlMetric> producerRecord =
         new ProducerRecord<>(_cruiseControlMetricsTopic, null, ccm.time(), key, ccm);
-    LOG.debug("$$$ Sending Cruise Control metric {}.", ccm);
+    LOG.info("$$$ Sending Cruise Control metric {}.", ccm);
     _producer.send(producerRecord, new Callback() {
       @Override
       public void onCompletion(RecordMetadata recordMetadata, Exception e) {
         if (e != null) {
-          LOG.warn("Failed to send Cruise Control metric {}", ccm);
+          LOG.error("$$$ Failed to send Cruise Control metric {}", ccm);
+          LOG.error(e.getMessage());
+          LOG.error(e.toString());
           _numMetricSendFailure++;
         }
         else {
